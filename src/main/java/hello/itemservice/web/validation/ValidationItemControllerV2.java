@@ -152,6 +152,12 @@ public class ValidationItemControllerV2 {
 
     @PostMapping("/add")
     public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) { // Item 바로 다음에 bindingResult 와야함!!(순서 개중요)
+        //이 if문이 검증 로직 아래에 있으면 검증로직+바인딩타입오류 메시지 같이 출력.
+        if(bindingResult.hasErrors()){
+            log.info("error = {}", bindingResult);
+            return "validation/v2/addForm";
+        }
+
         log.info("objectName={}", bindingResult.getObjectName());
         log.info("target={}", bindingResult.getTarget());
 
@@ -177,11 +183,6 @@ public class ValidationItemControllerV2 {
 //                bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"}, new Object[]{10000, resultPrice}, null));
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
-        }
-
-        if(bindingResult.hasErrors()){
-            log.info("error = {}", bindingResult);
-            return "validation/v2/addForm";
         }
 
         //성공 로직
